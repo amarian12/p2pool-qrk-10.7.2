@@ -309,12 +309,12 @@ class Node(object):
                         break
     
     def get_current_txouts(self):
-	#i = 210240
 	real_subsidy = self.quarkd_work.value['subsidy']
-	#while i <= self.quarkd_work.value['height']:
-		#real_subsidy = real_subsidy*92.9/100
-		#i = i + 210240
-        return p2pool_data.get_expected_payouts(self.tracker, self.best_share_var.value, self.quarkd_work.value['bits'].target, real_subsidy, self.net)
+        if self.quarkd_work.value['payee_amount'] >= 0 :
+            real_pay = real_subsidy - self.quarkd_work.value['payee_amount']
+            return p2pool_data.get_expected_payouts(self.tracker, self.best_share_var.value, self.quarkd_work.value['bits'].target, real_pay, self.net)
+        else:
+            return p2pool_data.get_expected_payouts(self.tracker, self.best_share_var.value, self.quarkd_work.value['bits'].target, real_subsidy, self.net)
     
     def clean_tracker(self):
         best, desired, decorated_heads, bad_peer_addresses = self.tracker.think(self.get_height_rel_highest, self.quarkd_work.value['previous_block'], self.quarkd_work.value['bits'], self.known_txs_var.value)
